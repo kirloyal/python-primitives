@@ -41,5 +41,34 @@ for v in vars(clf).keys():
         print(v,val.shape)
 
 
+#%%
+
+
+n_components = 2
+
+classes = list(set(y.flatten()))
+
+mu = X.mean(axis=0)
+mu_k = np.zeros((len(classes),X.shape[1]))
+S_w = np.zeros((X.shape[1],X.shape[1]))
+S_b = np.zeros((X.shape[1],X.shape[1]))
+for i in range(len(classes)):
+    y_tar = classes[i]
+    mu_k[i] = X[y==y_tar].mean(axis=0)
+    X_centered = X[y==y_tar] - mu_k[i]
+    S_w += (X_centered[:,:,np.newaxis] * X_centered[:,np.newaxis,:]).sum(axis=0)
+    
+    mu_centered = mu_k[i] - mu
+    S_b += (y==y_tar).sum() * (mu_centered[np.newaxis,:] * mu_centered[:,np.newaxis])
+
+w, v = np.linalg.eig(np.dot(np.linalg.inv(S_w),S_b))
+print(w)
+
+v = -v[:,:n_components]
+
+X_proj = np.dot(X,v)
+plt.scatter(X_proj[:, 0], X_proj[:, 1], alpha=0.2, c = y, cmap='viridis')
+plt.axis('equal');
+
 
 #%%
