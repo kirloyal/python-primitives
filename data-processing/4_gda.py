@@ -44,6 +44,7 @@ alpha = np.real(v[:,:n_components])
 #%%
 
 X_proj = np.dot(K,alpha)
+plt.style.use(['default'])
 plt.scatter(X_proj[:, 0], X_proj[:, 1], alpha=0.2, c = y, cmap='viridis')
 plt.axis('equal');
 

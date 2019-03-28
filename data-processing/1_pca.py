@@ -21,6 +21,7 @@ print(pca.mean_)
 
 X_proj = pca.transform(X) 
 # X_proj = np.dot(X - pca.mean_, pca.components_.T)
+plt.style.use(['default'])
 plt.scatter(X_proj[:, 0], X_proj[:, 1], alpha=0.2, c = y, cmap='viridis')
 plt.axis('equal');
 

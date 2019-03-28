@@ -25,6 +25,7 @@ print(clf.means_)
 
 X_proj = clf.transform(X) 
 X_proj2 = np.dot(X - clf.xbar_, clf.scalings_)
+plt.style.use(['default'])
 plt.scatter(X_proj[:, 0], X_proj[:, 1], alpha=0.2, c = y, cmap='viridis')
 plt.axis('equal');
 
@@ -39,7 +40,6 @@ for v in vars(clf).keys():
     val = vars(clf)[v]
     if isinstance(val, np.ndarray):
         print(v,val.shape)
-
 
 #%%
 
@@ -67,6 +67,7 @@ print(w)
 v = -v[:,:n_components]
 
 X_proj = np.dot(X,v)
+plt.style.use(['default'])
 plt.scatter(X_proj[:, 0], X_proj[:, 1], alpha=0.2, c = y, cmap='viridis')
 plt.axis('equal');
 
