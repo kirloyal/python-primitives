@@ -36,6 +36,7 @@ fps = cap.get(cv2.CAP_PROP_FPS)
 w = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH ))
 h = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT ))
 nFrame = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+cap.set(cv2.CAP_PROP_POS_FRAMES,nFrame/2)
 
 print(fps)
 print(w,h)
