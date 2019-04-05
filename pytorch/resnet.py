@@ -8,12 +8,10 @@ from torchvision import datasets, transforms
 use_cuda = torch.cuda.is_available()
 device = torch.device("cuda" if use_cuda else "cpu")
 
-dataloader = torch.utils.data.DataLoader( datasets.CIFAR10('../datasets', train=False, download=False,
-                       transform=transforms.Compose([
-                           transforms.ToTensor(),
-                           transforms.Normalize((0.1307,), (0.3081,))
-                       ])),
-        batch_size=4, shuffle=True, num_workers=1)
+transform = transforms.Compose([transforms.ToTensor(),
+                                transforms.Normalize((0.1307,), (0.3081,))])
+dataset = datasets.CIFAR10('../datasets', train=False, download=False, transform=transform)
+dataloader = torch.utils.data.DataLoader( dataset = dataset, batch_size=4, shuffle=True, num_workers=1)
 
 X, y = next(iter(dataloader))
 X = X.to(device)
@@ -47,7 +45,6 @@ for item in resnet101._modules:
 print(resnet101.fc)
 print(resnet101._modules['fc'])
 
-
 #%%
 
 data = X
@@ -75,3 +72,4 @@ print(X.shape)
 print(resnet101(X).shape)
 
 #%%
+
