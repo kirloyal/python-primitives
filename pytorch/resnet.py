@@ -38,12 +38,16 @@ print(y_out.shape)
 #%%
 
 print(resnet101)
+print()
 for var in vars(resnet101):
     print(var)
+print()
 for item in resnet101._modules:
     print(item)
 print(resnet101.fc)
+print()
 print(resnet101._modules['fc'])
+print()
 
 #%%
 
