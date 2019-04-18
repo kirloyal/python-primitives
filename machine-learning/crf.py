@@ -22,7 +22,7 @@ class_weights = 1. / np.bincount(np.hstack(data_train['Y']))
 class_weights *= 21. / np.sum(class_weights)
 print(class_weights)
 
-model = crfs.EdgeFeatureGraphCRF(inference_method='mqpbo',
+model = crfs.EdgeFeatureGraphCRF(inference_method="ogm",
                                  class_weight=class_weights,
                                  symmetric_edge_features=[0, 1],
                                  antisymmetric_edge_features=[2])
@@ -37,7 +37,6 @@ ssvm = learners.NSlackSSVM(
 ssvm.fit(data_train['X'], data_train['Y'])
 
 #%%
-
 
 # data_val = pickle.load(open("data_val_dict.pickle"))
 # y_pred = ssvm.predict(data_val['X'])
