@@ -106,3 +106,4 @@ settings.json
 
 tmp.*
 tmp
+*.pickle
