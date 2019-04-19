@@ -1,51 +1,74 @@
+# ref)
+# https://scikit-image.org/docs/dev/auto_examples/segmentation/plot_ncut.html#sphx-glr-auto-examples-segmentation-plot-ncut-py
+# https://github.com/lucasb-eyer/pydensecrf.git
+
 #%%
 
+from skimage import data, segmentation, color
+from skimage.future import graph
+from matplotlib import pyplot as plt
+
+
+img = data.coffee()
+
+slic = segmentation.slic(img, compactness=30, n_segments=400)
+g = graph.rag_mean_color(img, slic, mode='similarity')
+anno_lbl = graph.cut_normalized(slic, g) + 1
+anno_rgb = color.label2rgb(anno_lbl, img, kind='avg')
+
+fig, ax = plt.subplots(ncols=2, sharex=True, sharey=True, figsize=(6, 8))
+
+ax[0].imshow(img)
+ax[1].imshow(anno_rgb)
+
+for a in ax:
+    a.axis('off')
+
+plt.tight_layout()
+
+#%%
+
+import sys
 import numpy as np
-import pickle
+import pydensecrf.densecrf as dcrf
+from pydensecrf.utils import unary_from_labels
+import cv2 
 
-from pystruct import learners
-import pystruct.models as crfs
-from pystruct.utils import SaveLogger
+colors, labels = np.unique(anno_lbl, return_inverse=True)
+HAS_UNK = 0 in colors
+if HAS_UNK:
+    print("has unkown")
+    colors = colors[1:]
 
-
-#%%
-
-data_train = pickle.load(open("data_train.pickle"))
-C = 0.01
-n_states = 21
-print("number of samples: %s" % len(data_train['X']))
-
-#%%
-
-
-class_weights = 1. / np.bincount(np.hstack(data_train['Y']))
-class_weights *= 21. / np.sum(class_weights)
-print(class_weights)
-
-model = crfs.EdgeFeatureGraphCRF(inference_method="ogm",
-                                 class_weight=class_weights,
-                                 symmetric_edge_features=[0, 1],
-                                 antisymmetric_edge_features=[2])
-
-experiment_name = "edge_features_one_slack_trainval_%f" % C
-
-ssvm = learners.NSlackSSVM(
-    model, verbose=2, C=C, max_iter=100000, n_jobs=-1,
-    tol=0.0001, show_loss_every=5,
-    logger=SaveLogger(experiment_name + ".pickle", save_every=100),
-    inactive_threshold=1e-3, inactive_window=10, batch_size=100)
-ssvm.fit(data_train['X'], data_train['Y'])
+n_labels = len(set(labels.flat)) - int(HAS_UNK)
+print(n_labels, " labels", (" plus \"unknown\" 0: " if HAS_UNK else ""), set(labels.flat))
 
 #%%
 
-# data_val = pickle.load(open("data_val_dict.pickle"))
-# y_pred = ssvm.predict(data_val['X'])
+d = dcrf.DenseCRF2D(img.shape[1], img.shape[0], n_labels)
+U = unary_from_labels(labels, n_labels, gt_prob=0.7, zero_unsure=HAS_UNK)
+d.setUnaryEnergy(U)
+d.addPairwiseGaussian(sxy=(3, 3), compat=3, kernel=dcrf.DIAG_KERNEL,
+                        normalization=dcrf.NORMALIZE_SYMMETRIC)
 
-# # we throw away void superpixels and flatten everything
-# y_pred, y_true = np.hstack(y_pred), np.hstack(data_val['Y'])
-# y_pred = y_pred[y_true != 255]
-# y_true = y_true[y_true != 255]
+d.addPairwiseBilateral(sxy=(80, 80), srgb=(13, 13, 13), rgbim=img,
+                        compat=10,
+                        kernel=dcrf.DIAG_KERNEL,
+                        normalization=dcrf.NORMALIZE_SYMMETRIC)
 
-# print("Score on validation set: %f" % np.mean(y_true == y_pred))
+MAP = np.argmax(Q, axis=0)
+MAP = colors[MAP].reshape(img.shape[:2])
+#%%
 
-# #%%
+out = color.label2rgb(MAP, img, kind='avg')
+fig, ax = plt.subplots(nrows=3, sharex=True, sharey=True, figsize=(6, 8))
+
+ax[0].imshow(img)
+ax[1].imshow(anno_rgb)
+ax[2].imshow(out)
+
+for a in ax:
+    a.axis('off')
+plt.tight_layout()
+
+#%%

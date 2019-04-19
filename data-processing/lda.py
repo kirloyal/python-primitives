@@ -46,7 +46,7 @@ for v in vars(clf).keys():
 
 n_components = 2
 
-classes = list(set(y.flatten()))
+classes = np.unique(y)
 
 mu = X.mean(axis=0)
 mu_k = np.zeros((len(classes),X.shape[1]))

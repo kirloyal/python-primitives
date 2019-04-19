@@ -10,7 +10,7 @@ y = iris.target # (150,)
 
 #%%
 
-classes = list(set(y.flatten()))
+classes = np.unique(y)
 for i in range(len(classes)):
     y_tar = classes[i]
     mu = np.mean(X[y==y_tar], axis=0)

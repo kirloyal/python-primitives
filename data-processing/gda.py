@@ -23,7 +23,7 @@ K = polynomial_kernel(X, coef0 = 1 , degree=2)
 n_components = 2
 n_samples = X.shape[0]
 
-classes = list(set(y.flatten()))
+classes = np.unique(y)
 W = np.zeros((n_samples,n_samples))
 
 for j in range(len(classes)):
@@ -48,3 +48,6 @@ plt.style.use(['default'])
 plt.scatter(X_proj[:, 0], X_proj[:, 1], alpha=0.2, c = y, cmap='viridis')
 plt.axis('equal');
 
+
+
+#%%
