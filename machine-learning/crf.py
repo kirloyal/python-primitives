@@ -56,6 +56,7 @@ d.addPairwiseBilateral(sxy=(80, 80), srgb=(13, 13, 13), rgbim=img,
                         kernel=dcrf.DIAG_KERNEL,
                         normalization=dcrf.NORMALIZE_SYMMETRIC)
 
+Q = d.inference(5)
 MAP = np.argmax(Q, axis=0)
 MAP = colors[MAP].reshape(img.shape[:2])
 #%%
