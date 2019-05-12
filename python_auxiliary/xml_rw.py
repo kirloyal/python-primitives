@@ -27,3 +27,5 @@ for track in root.findall('sub'):
 for track in root.find('sub').findall('txt'):
     print(track.text, track.attrib)
 
+for track in root.iter():
+    print track
