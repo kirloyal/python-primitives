@@ -2,6 +2,7 @@ import os
 import math
 
 def get_primenumber(tu_range):
+    res = []
     procid = os.getpid()
     for i in range(*tu_range):
         if i < 2:
@@ -13,18 +14,13 @@ def get_primenumber(tu_range):
                 break
         if not bFlag:
             print('prime number {} by proc {}'.format(i, procid))
+            res.append(i)
+    return res
 #%%
  
-from multiprocessing import Process
+import multiprocessing 
 
-
-params = [(100000,200000), (200000, 300000), (300000, 400000)]
-procs = []
-
-for index, param in enumerate(params):
-    proc = Process(target=get_primenumber, args=(param,))
-    procs.append(proc)
-    proc.start()
-
-for proc in procs:
-    proc.join()
+params = [(10000,20000), (20000, 30000), (30000, 40000)]
+pool = multiprocessing.Pool(processes = 3)
+res = pool.map(get_primenumber, params)
+print res
