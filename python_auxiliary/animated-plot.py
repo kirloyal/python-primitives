@@ -20,11 +20,12 @@ ax = plt.axes()
 ims=[]
 for time in range(10):
     im = ax.imshow(np.random.rand(10,10))
-    line, = ax.plot(np.random.uniform(0,10,10)[:time])
-    ims.append([im, line])
+    line, = ax.plot(np.random.uniform(0,9,10)[:time], c=np.random.uniform(0,1,3))
+    scat = ax.scatter(np.random.uniform(0,9,100), np.random.uniform(0,9,100), c=np.random.rand(100,4), s=np.random.uniform(0,9,100))
+    ims.append([im, line, scat])
 
 #run animation
-ani = animation.ArtistAnimation(fig,ims, interval=50,blit=False)
+ani = animation.ArtistAnimation(fig, ims, interval=50,blit=False)
 plt.show()
 # ani.save('tmp/tmp.mp4', fps=30, extra_args=['-vcodec', 'libx264'])
 # HTML(ani.to_html5_video())
@@ -37,22 +38,32 @@ from matplotlib.animation import FuncAnimation
 
 fig, ax = plt.subplots()
 xdata, ydata = [], []
-ln, = plt.plot([], [], 'r.-')
+# im = ax.imshow(np.random.rand(10,10))
+im = ax.imshow(np.zeros((10,10)), vmin=0, vmax=1)
+# https://matplotlib.org/api/image_api.html
+ln, = plt.plot([], [])
+# https://matplotlib.org/3.1.0/api/_as_gen/matplotlib.lines.Line2D.html#matplotlib.lines.Line2D.set_color
+scat = plt.scatter([],[])
+# https://matplotlib.org/3.1.0/api/collections_api.html#matplotlib.collections.PathCollection
 
 def init():
-    ax.set_xlim(0, 2*np.pi)
-    ax.set_ylim(-1, 1)
-    return ln,
+    im.set_data(np.random.rand(10,10))
+    ln.set_data([], [])
+    scat.set_offsets([])
+    return im, ln, scat
 
 def update(frame):
-    xdata.append(frame)
-    ydata.append(np.sin(frame))
-    ln.set_data(xdata, ydata)
-    return ln,
+    im.set_data(np.random.rand(10,10))
+    ln.set_data(np.arange(frame), np.random.uniform(0,9,10)[:frame])
+    ln.set_color(np.random.rand(3))
+    scat.set_offsets(np.random.uniform(0,9,(100,2)))
+    scat.set_facecolors(np.random.rand(100,4))
+    scat.set_sizes(np.random.uniform(0,9,100))
+    return im, ln, scat
 
-ani = FuncAnimation(fig, update, frames=np.linspace(0, 2*np.pi, 128),
-                    init_func=init, blit=True)
+ani = FuncAnimation(fig, update, frames=10, interval=50, init_func=init, blit=True)
+        
 plt.show()
-ani.save('tmp/tmp.mp4', fps=30, extra_args=['-vcodec', 'libx264'])
 # ani.save('tmp/tmp.mp4', fps=30, extra_args=['-vcodec', 'libx264'])
 # HTML(ani.to_html5_video())
+
