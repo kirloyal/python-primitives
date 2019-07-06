@@ -85,4 +85,6 @@ for epoch in range(1, args.epochs + 1):
         test_loss, correct, len(test_loader.dataset),
         100. * correct / len(test_loader.dataset)))
 
-# writer.close()
+writer_train.close()
+writer_test.close()
+writer_correct.close()
