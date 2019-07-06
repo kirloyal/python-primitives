@@ -5,6 +5,7 @@
 # http://jakevdp.github.io/blog/2012/08/18/matplotlib-animation-tutorial/
 # https://stackoverflow.com/questions/17853680/animation-using-matplotlib-with-subplots-and-artistanimation
 # https://stackoverflow.com/questions/9401658/how-to-animate-a-scatter-plot
+# https://brushingupscience.com/2016/06/21/matplotlib-animations-the-easy-way/
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -37,7 +38,6 @@ import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 
 fig, ax = plt.subplots()
-xdata, ydata = [], []
 # im = ax.imshow(np.random.rand(10,10))
 im = ax.imshow(np.zeros((10,10)), vmin=0, vmax=1)
 # https://matplotlib.org/api/image_api.html
@@ -49,7 +49,6 @@ scat = plt.scatter([],[])
 def init():
     im.set_data(np.random.rand(10,10))
     ln.set_data([], [])
-    scat.set_offsets([])
     return im, ln, scat
 
 def update(frame):
