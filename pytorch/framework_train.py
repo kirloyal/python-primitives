@@ -44,7 +44,10 @@ model = Net().to(device)
 optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum=args.momentum)
 criterion = F.nll_loss
 
-writer = SummaryWriter('./tmp')
+writer_correct = SummaryWriter('./tmp/correct')
+writer_train = SummaryWriter('./tmp/train_0')
+writer_test = SummaryWriter('./tmp/test_0')
+
 for epoch in range(1, args.epochs + 1):
     model.train()
     pbar = tqdm(train_loader)
@@ -60,7 +63,6 @@ for epoch in range(1, args.epochs + 1):
         if batch_idx % args.log_interval == 0:
             pbar.set_description("Train Epoch: {}, Loss: {:.6f}".format(epoch, loss.item()))
     train_loss /= len(train_loader.dataset)    
-    writer.add_scalar('train_loss', train_loss, epoch)
     
     model.eval()
     test_loss = 0
@@ -74,11 +76,13 @@ for epoch in range(1, args.epochs + 1):
             correct += pred.eq(target.view_as(pred)).sum().item()
 
     test_loss /= len(test_loader.dataset)
-    writer.add_scalar('test_loss', test_loss, epoch)
-    writer.add_scalar('correct', correct, epoch)
+    
+    writer_train.add_scalar('loss', train_loss, epoch)
+    writer_test.add_scalar('loss', test_loss, epoch)
+    writer_correct.add_scalar('correct', correct, epoch)
     
     print('\nTest set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format(
         test_loss, correct, len(test_loader.dataset),
         100. * correct / len(test_loader.dataset)))
 
-writer.close()
+# writer.close()
