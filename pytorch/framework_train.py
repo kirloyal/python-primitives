@@ -97,7 +97,6 @@ for epoch in range(epoch_start + 1, epoch_start + args.epochs + 1):
         100. * correct / len(test_loader.dataset)))
 
     if test_loss < best_test_loss:
-        print(epoch)
         best_test_loss = test_loss
         torch.save({
             'epoch': epoch,
