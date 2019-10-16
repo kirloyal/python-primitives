@@ -20,10 +20,16 @@ from scipy.spatial.distance import pdist
 
 
 Z = linkage(X, 'ward')
-print(Z) # [i, j, dist, number of member]
+# print(Z) # [i, j, dist, number of member]
 c, coph_dists = cophenet(Z, pdist(X))
 print(c)
 cluster = fcluster(Z, t=10, criterion='distance')
+print(cluster)
+cluster_mean = []
+for i in range(cluster.max()):
+    cluster_mean.append(X[cluster == i+1].mean(axis=0))
+cluster_mean = np.array(cluster_mean)
+print(cluster_mean)
 
 #%%
 
@@ -41,10 +47,12 @@ from sklearn.decomposition import PCA
 pca = PCA(n_components=2)
 pca.fit(X)
 X_proj = pca.transform(X) 
+cluster_mean_proj = pca.transform(cluster_mean) 
 
 plt.style.use(['default'])
 plt.scatter(X_proj[:, 0], X_proj[:, 1], alpha=0.2, c = y, cmap='viridis', marker = '.')
 plt.scatter(X_proj[:, 0], X_proj[:, 1], alpha=0.2, c = cluster, cmap='viridis', marker = 'o')
+plt.scatter(cluster_mean_proj[:, 0], cluster_mean_proj[:, 1])
 plt.axis('equal');
 
 
